@@ -1,0 +1,54 @@
+{
+  "name": "polygres-sdk",
+  "version": "0.4.1",
+  "description": "TypeScript SDK for Polygres graph, vector, text, and hybrid retrieval",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit"
+  },
+  "keywords": [
+    "polygres",
+    "postgres",
+    "postgresql",
+    "vector-search",
+    "graph-search",
+    "retrieval",
+    "hybrid-search"
+  ],
+  "author": "Polygres",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MRCORD/polygres-sdk-ts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MRCORD/polygres-sdk-ts/issues"
+  },
+  "homepage": "https://polygres.com",
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.7"
+  }
+}
