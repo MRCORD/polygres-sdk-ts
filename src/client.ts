@@ -67,6 +67,8 @@ export interface PolygresOptions {
   max_retries?: number;
   headers?: Record<string, string>;
   fetch?: typeof fetch;
+  checkVersionNotices?: boolean;
+  check_version_notices?: boolean;
 }
 
 export interface TransportResponse {
@@ -82,6 +84,7 @@ export class Polygres {
   readonly _maxRetries: number;
   readonly _headers: Record<string, string>;
   readonly _fetch: typeof fetch;
+  readonly _checkVersionNotices: boolean;
 
   constructor(options: PolygresOptions) {
     const rawKey = options.apiKey ?? options.api_key;
@@ -122,6 +125,7 @@ export class Polygres {
     this._maxRetries = maxRetries;
     this._headers = options.headers ? { ...options.headers } : {};
     this._fetch = options.fetch ?? (typeof globalThis.fetch === 'function' ? globalThis.fetch.bind(globalThis) : fetch);
+    this._checkVersionNotices = options.checkVersionNotices ?? options.check_version_notices ?? true;
   }
 
   project(
@@ -157,9 +161,12 @@ export class Polygres {
       }
     }
 
+    const isBrowser = typeof window !== 'undefined' && typeof (window as any).document !== 'undefined';
     const nodeVersion = typeof process !== 'undefined' && process.versions?.node ? process.versions.node : 'unknown';
     headers['Authorization'] = `Bearer ${this._apiKey}`;
-    headers['User-Agent'] = `polygres-ts/${VERSION}`;
+    if (!isBrowser) {
+      headers['User-Agent'] = `polygres-ts/${VERSION}`;
+    }
     headers[CLIENT_INFO_HEADER] = `polygres-ts/${VERSION}; node/${nodeVersion}; runtime/fetch`;
     headers[API_VERSION_HEADER] = DEFAULT_API_VERSION;
 
@@ -397,7 +404,9 @@ export class Polygres {
       }
 
       emitVersionNotice(headersObj, VERSION);
-      checkCentralVersionNotices(VERSION);
+      if (this._checkVersionNotices) {
+        checkCentralVersionNotices(VERSION);
+      }
 
       if (error !== null) {
         throw error;

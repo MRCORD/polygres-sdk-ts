@@ -1,5 +1,5 @@
 {
-  "name": "polygres-sdk",
+  "name": "polygres-sdk-ts",
   "version": "0.4.1",
   "description": "TypeScript SDK for Polygres graph, vector, text, and hybrid retrieval",
   "main": "./dist/index.js",

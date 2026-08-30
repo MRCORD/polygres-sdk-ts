@@ -13,7 +13,7 @@ The SDK connects to a project's Runtime API using a Polygres API key. It is full
 Requires Node.js 18 or newer (or any runtime with standard `fetch` and `AbortController` support, such as Cloudflare Workers, Deno, or Bun).
 
 ```bash
-npm install polygres-sdk
+npm install polygres-sdk-ts
 ```
 
 ## Quick Start
@@ -21,7 +21,7 @@ npm install polygres-sdk
 Initialize the client with your Project API key and Runtime API URL:
 
 ```typescript
-import { Polygres } from 'polygres-sdk';
+import { Polygres } from 'polygres-sdk-ts';
 
 const client = new Polygres({
   apiKey: process.env.POLYGRES_API_KEY!,
@@ -218,7 +218,7 @@ import {
   PolygresMaintenanceError,
   PolygresRuntimeError,
   PolygresAmbiguousWriteError,
-} from 'polygres-sdk';
+} from 'polygres-sdk-ts';
 
 try {
   await project.vector.search(embedding);
@@ -237,14 +237,38 @@ try {
 
 Sensitive tokens and API keys are automatically redacted from error messages, request IDs, and details objects.
 
-## Edge & Browser Compatibility
+## Edge & Cloudflare Workers
 
 The SDK uses the standard `fetch` and Web Streams APIs with zero native Node-only C++ dependencies. It runs seamlessly in:
-- Node.js (18+)
 - Cloudflare Workers
+- Node.js (18+)
 - Deno
 - Bun
 - Web Browsers
+
+### Cloudflare Workers Example
+
+In Cloudflare Workers, read API secrets from `env` bindings and optionally disable background version checks to preserve subrequest quota:
+
+```typescript
+import { Polygres } from 'polygres-sdk-ts';
+
+export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const client = new Polygres({
+      apiKey: env.POLYGRES_API_KEY,
+      runtimeUrl: env.POLYGRES_RUNTIME_URL,
+      checkVersionNotices: false, // Recommended for edge to save subrequests
+    });
+
+    const results = await client.project().context.search('docs', [0.1, 0.2, 0.3], {
+      limit: 5,
+    });
+
+    return Response.json(results.results);
+  },
+};
+```
 
 ## Development & Testing
 

@@ -176,4 +176,33 @@ describe('Polygres client construction and validation', () => {
     expect(readiness.vector.ready).toBe(true);
     expect(readiness.hybrid.ready).toBe(true);
   });
+
+  it('supports disabling central version notice checks', () => {
+    const client = new Polygres({
+      apiKey: API_KEY,
+      runtimeUrl: RUNTIME_URL,
+      checkVersionNotices: false,
+    });
+    expect(client._checkVersionNotices).toBe(false);
+  });
+
+  it('does not set User-Agent header in browser environment', () => {
+    const client = new Polygres({
+      apiKey: API_KEY,
+      runtimeUrl: RUNTIME_URL,
+    });
+
+    // Simulate browser window
+    (globalThis as any).window = { document: {} };
+    try {
+      const headers = client._headersFor();
+      expect(headers['User-Agent']).toBeUndefined();
+      expect(headers['Authorization']).toBe(`Bearer ${API_KEY}`);
+    } finally {
+      delete (globalThis as any).window;
+    }
+
+    const nodeHeaders = client._headersFor();
+    expect(nodeHeaders['User-Agent']).toBeDefined();
+  });
 });
