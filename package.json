@@ -1,6 +1,6 @@
 {
   "name": "polygres-sdk-ts",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "TypeScript SDK for Polygres graph, vector, text, and hybrid retrieval",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -25,6 +25,7 @@
   },
   "scripts": {
     "build": "tsup",
+    "prepublishOnly": "npm run build",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit"
